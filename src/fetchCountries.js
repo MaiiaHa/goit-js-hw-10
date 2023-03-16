@@ -4,7 +4,7 @@ function fetchCountries(name) {}
 return fetch(`${BASE_URL}${name}`)
   .then(responce => {
     return responce.json();
-    // console.log(responce.json());
+    console.log(responce.json());
   })
   .then(countries => {
     console.log(countries);

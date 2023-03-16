@@ -20,10 +20,12 @@ refs.form.addEventListener('input', debounce(onSubmitForm, DEBOUNCE_DELAY));
 function onSubmitForm(e) {
   e.preventDefault();
 
-  const countryName = e.target.value;
+  const countryName = e.target.value.trim();
   console.log(countryName);
 
-  API.fetchCountries(countryName); // передаємо назву країни з інпут на бекенд
+  if (countryName !== '') {
+    API.fetchCountries(countryName); // передаємо назву країни з інпут на бекенд
+  }
 }
 
 //https://restcountries.com/v3.1/all?fields=name,capital,currencies

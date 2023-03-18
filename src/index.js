@@ -3,7 +3,7 @@ import './css/styles.css';
 import Notiflix from 'notiflix';
 import debounce from 'lodash.debounce';
 import API from './js/fetchCountries';
-import Handlebars from 'handlebars'; // npm install handlebars used
+// import Handlebars from 'handlebars'; // npm install handlebars used
 // import countryCardTmpl from './templates/country-card.hbs';
 //========
 const DEBOUNCE_DELAY = 300;
@@ -23,17 +23,19 @@ function onSubmitForm(e) {
   // console.log(input); // to prepare clearing input
 
   const countryName = e.target.value.trim();
-  if (countryName === '') {
+  if (!countryName) {
     return;
   }
-  // console.log(countryName); // counntry entered in field
-  // API.fetchCountries(countryName); // передаємо назву країни з інпут на бекенд
+  console.log(countryName); // counntry entered in field
+  API.fetchCountries(countryName); // передаємо назву країни з інпут на бекенд
 
   API.fetchCountries(countryName)
     .then(countries => {
-      // console.log(countries); // massive of objects [{},{},{}]
+      console.log(countryName); // massive of objects [{},{},{}]
+
+      console.log(countries); // massive of objects [{},{},{}]
       const countryList = countries.map(country => country.name.official);
-      // console.log(countryList); // massive official names of countries [UA, UK, JU]
+      console.log(countryList); // massive official names of countries [UA, UK, JU]
 
       if (countryList.length > 10) {
         Notiflix.Notify.info(
@@ -102,7 +104,7 @@ function createCountryList(countries) {
 function deleteCountriesInfo() {
   refs.countryInfo.innerHTML = '';
   refs.countryList.innerHTML = '';
-  input = '';
+  // input = '';
 }
 
 // Questions

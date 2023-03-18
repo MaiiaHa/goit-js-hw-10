@@ -3,9 +3,9 @@ function fetchCountries(country) {
   return fetch(
     `${BASE_URL}name/${country}?fields=name,capital,population,flags,languages`
   ).then(responce => {
-    // if (!response.ok) {
-    //   throw new Error(response.status);
-    // }
+    if (!responce.ok) {
+      throw new Error(responce.status);
+    }
     return responce.json();
     // console.log(responce.json());
   });

@@ -21,6 +21,7 @@ function onSubmitForm(e) {
 
   const countryName = e.target.value.trim();
   if (!countryName) {
+    deleteCountriesInfo();
     return;
   }
   // console.log(countryName); // counntry entered in field

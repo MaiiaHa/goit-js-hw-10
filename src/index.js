@@ -1,16 +1,15 @@
 import './css/styles.css';
-
+//========
+import Notiflix from 'notiflix';
+import debounce from 'lodash.debounce';
+import API from './js/fetchCountries';
+import Handlebars from 'handlebars'; // npm install handlebars used
+// import countryCardTmpl from './templates/country-card.hbs';
+//========
 const DEBOUNCE_DELAY = 300;
 
-//========
-
-import debounce from 'lodash.debounce';
-import API from './fetchCountries';
-
-//========
-
 const refs = {
-  form: document.querySelector('s#search-box'),
+  form: document.querySelector('#search-box'),
   countryList: document.querySelector('.country-list'),
   countryInfo: document.querySelector('.country-info'),
 };
@@ -20,33 +19,93 @@ refs.form.addEventListener('input', debounce(onSubmitForm, DEBOUNCE_DELAY));
 function onSubmitForm(e) {
   e.preventDefault();
 
-  const countryName = e.target.value.trim();
-  console.log(countryName);
+  // let input = e.target.value;
+  // console.log(input); // to prepare clearing input
 
-  if (countryName !== '') {
-    API.fetchCountries(countryName); // передаємо назву країни з інпут на бекенд
+  const countryName = e.target.value.trim();
+  if (countryName === '') {
+    return;
   }
+  // console.log(countryName); // counntry entered in field
+  // API.fetchCountries(countryName); // передаємо назву країни з інпут на бекенд
+
+  API.fetchCountries(countryName)
+    .then(countries => {
+      // console.log(countries); // massive of objects [{},{},{}]
+      const countryList = countries.map(country => country.name.official);
+      // console.log(countryList); // massive official names of countries [UA, UK, JU]
+
+      if (countryList.length > 10) {
+        Notiflix.Notify.info(
+          'Too many matches found. Please enter a more specific name.'
+        ); // do not perform function fetchCountries
+        return;
+      } else if (countryList.length === 1) {
+        createCountryCard(countries); // show card
+      } else if (countryList.length >= 2 && countryList.length <= 10) {
+        createCountryList(countries); // show list of countries
+      }
+    })
+    .catch(error => {
+      Notiflix.Notify.failure('Oops, there is no country with that name');
+    });
+
+  deleteCountriesInfo();
 }
 
-//https://restcountries.com/v3.1/all?fields=name,capital,currencies
+function createCountryCard(countries) {
+  const markup = countries
+    .map(
+      countryItem => `
+      <div class='card'>
+        <div class='card-title'>
+          <img class='card-img' src='${countryItem.flags.svg}' alt='${
+        countryItem.name.official
+      }' height="20px" width="40px" />
+          <h2 class='card-country-name'>${countryItem.name.official}</h2>
+        </div>
+        <ul class='card-body'>
+          <li class=''>
+          <p><span class='card-description'>Capital:</span> ${
+            countryItem.capital
+          }</p>
+          </li>
+          <li class=''>
+          <p><span class='card-description'>Population:</span> ${
+            countryItem.population
+          }</p>
+                </li>
+           <li class=''>
+          <p><span class='card-description'>Languages:</span> ${Object.values(
+            countryItem.languages
+          )}</p>
+            </li>
+           </ul>
+         </div>`
+    )
+    .join('');
 
-// const res = fetch(
-//   `https://restcountries.com/v3.1/all?fields=name.official,capital,population,flags.svg,languages`
-// )
-//   .then(responce => {
-//     return responce.json();
-//     // console.log(responce.json());
-//   })
-//   .then(countries => {
-//     console.log(countries);
-//   })
-//   .catch(error => {
-//     console.log(error);
-//   });
+  refs.countryInfo.insertAdjacentHTML('beforeend', markup);
+}
+function createCountryList(countries) {
+  const markup = countries
+    .map(
+      countryItem => `
+        <div class='card-title'>
+          <img class='card-img' src='${countryItem.flags.svg}' alt='${countryItem.name.official}' height="20px" width="40px" />
+          <h2 class='card-country-name'>${countryItem.name.official}</h2>
+        </div>`
+    )
+    .join('');
+  refs.countryList.insertAdjacentHTML('beforeend', markup);
+}
+function deleteCountriesInfo() {
+  refs.countryInfo.innerHTML = '';
+  refs.countryList.innerHTML = '';
+  input = '';
+}
 
-/*
-name.official - повна назва країни
-capital - столиця
-population - населення
-flags.svg - посилання на зображення прапора
-languages - масив мов */
+// Questions
+// input = '';
+// handlebars як підключати і зробити так, щоб працювало через них
+//

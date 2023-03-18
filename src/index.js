@@ -19,9 +19,6 @@ refs.form.addEventListener('input', debounce(onSubmitForm, DEBOUNCE_DELAY));
 function onSubmitForm(e) {
   e.preventDefault();
 
-  // let input = e.target.value;
-  // console.log(input); // to prepare clearing input
-
   const countryName = e.target.value.trim();
   if (!countryName) {
     return;
@@ -81,7 +78,7 @@ function createCountryCard(countries) {
            <li class=''>
           <p><span class='card-description'>Languages:</span> ${Object.values(
             countryItem.languages
-          )}</p>
+          ).join(', ')}</p>
             </li>
            </ul>
          </div>`
@@ -105,10 +102,4 @@ function createCountryList(countries) {
 function deleteCountriesInfo() {
   refs.countryInfo.innerHTML = '';
   refs.countryList.innerHTML = '';
-  // input = '';
 }
-
-// Questions
-// input = '';
-// handlebars як підключати і зробити так, щоб працювало через них
-//

@@ -26,16 +26,14 @@ function onSubmitForm(e) {
   if (!countryName) {
     return;
   }
-  console.log(countryName); // counntry entered in field
-  API.fetchCountries(countryName); // передаємо назву країни з інпут на бекенд
+  // console.log(countryName); // counntry entered in field
+  // API.fetchCountries(countryName); // передаємо назву країни з інпут на бекенд
 
   API.fetchCountries(countryName)
     .then(countries => {
-      console.log(countryName); // massive of objects [{},{},{}]
-
-      console.log(countries); // massive of objects [{},{},{}]
+      // console.log(countries); // massive of objects [{},{},{}]
       const countryList = countries.map(country => country.name.official);
-      console.log(countryList); // massive official names of countries [UA, UK, JU]
+      // console.log(countryList); // massive official names of countries [UA, UK, JU]
 
       if (countryList.length > 10) {
         Notiflix.Notify.info(
@@ -49,7 +47,10 @@ function onSubmitForm(e) {
       }
     })
     .catch(error => {
-      Notiflix.Notify.failure('Oops, there is no country with that name');
+      if (error.message === '404') {
+        Notiflix.Notify.failure('Oops, there is no country with that name');
+      }
+      // console.dir(error);
     });
 
   deleteCountriesInfo();
